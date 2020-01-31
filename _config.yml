@@ -12,7 +12,7 @@ github_repo: "https://github.com/chenllliang/chenllliang.github.io.git" # you co
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "Goals determine what you going to be!"
-sidebar-avatar: /img/climg.jpeg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/clcl.jpeg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
