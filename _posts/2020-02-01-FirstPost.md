@@ -8,10 +8,9 @@ header-img: img/wuhan.jpg
 catalog: true
 tags:
     - 唠唠嗑
-
 ---
 
-#博客的破蛋日
+# 博客的破蛋日
 今天是一个特殊的日子，2020年2月1日。
 农历正月初八，春节假期本应过去，但是因为武汉的**冠状病毒**疫情，国家规定春节假期延长到了2月3号。
 
@@ -40,4 +39,3 @@ tags:
 
 
 *ps*:还要特别感谢[qiubaiying](https://github.com/qiubaiying)的博客模板。
-
