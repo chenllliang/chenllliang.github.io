@@ -21,7 +21,7 @@ Dataset是DataLoader实例化的一个参数，所以这篇文章会先从Datase
 ## 什么时候使用Dataset
 CIFAR10是CV训练中经常使用到的一个数据集，在PyTorch中CIFAR10是一个写好的Dataset，我们使用时只需以下代码：
 ```python
-data = datasets.CIFAR10("./data/", transform=transform, train=True, download=True)。
+data = datasets.CIFAR10("./data/", transform=transform, train=True, download=True)
 ```
 datasets.CIFAR10就是一个Datasets子类，data是这个类的一个实例。
 
@@ -49,19 +49,19 @@ Pytorch提供两种数据集：
 例子-1：
 ```python
 class CustomDataset(data.Dataset):#需要继承data.Dataset
-    def __init__(self):
-        # TODO
-        # 1. Initialize file path or list of file names.
-    def __getitem__(self, index):
-        # TODO
-        # 1. Read one data from file (e.g. using numpy.fromfile, PIL.Image.open).
-        # 2. Preprocess the data (e.g. torchvision.Transform).
-        # 3. Return a data pair (e.g. image and label).
-        #这里需要注意的是，第一步：read one data，是一个data
-        pass
-    def __len__(self):
-        # You should change 0 to the total size of your dataset.
-        return 0
+	def __init__(self):
+		# TODO
+		# 1. Initialize file path or list of file names.
+	def __getitem__(self, index):
+		# TODO
+		# 1. Read one data from file (e.g. using numpy.fromfile, PIL.Image.open).
+		# 2. Preprocess the data (e.g. torchvision.Transform).
+		# 3. Return a data pair (e.g. image and label).
+		#这里需要注意的是，第一步：read one data，是一个data
+		pass
+	def __len__(self):
+		# You should change 0 to the total size of your dataset.
+		return 0
 
 ```
 自己实验中写的一个例子：这里我们的图片文件储存在“./data/faces/”文件夹下，图片的名字并不是从1开始，而是从final_train_tag_dict.txt这个文件保存的字典中读取，label信息也是用这个文件中读取。大家可以照着上面的注释阅读这段代码。
