@@ -47,23 +47,6 @@ Pytorch提供两种数据集：
 这样一个数据集dataset，举个例子，当使用dataset[idx]命令时，可以在你的硬盘中读取你的数据集中第idx张图片以及其标签（如果有的话）;len(dataset)则会返回这个数据集的容量。
 
 例子-1：
-```python
-class CustomDataset(data.Dataset):#需要继承data.Dataset
-	def __init__(self):
-		# TODO
-		# 1. Initialize file path or list of file names.
-	def __getitem__(self, index):
-		# TODO
-		# 1. Read one data from file (e.g. using numpy.fromfile, PIL.Image.open).
-		# 2. Preprocess the data (e.g. torchvision.Transform).
-		# 3. Return a data pair (e.g. image and label).
-		#这里需要注意的是，第一步：read one data，是一个data
-		pass
-	def __len__(self):
-		# You should change 0 to the total size of your dataset.
-		return 0
-
-```
 自己实验中写的一个例子：这里我们的图片文件储存在“./data/faces/”文件夹下，图片的名字并不是从1开始，而是从final_train_tag_dict.txt这个文件保存的字典中读取，label信息也是用这个文件中读取。大家可以照着上面的注释阅读这段代码。
 ```python
 from torch.utils import data
