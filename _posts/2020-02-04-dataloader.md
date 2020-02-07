@@ -247,16 +247,10 @@ class MNIST(data.Dataset):
 
 对应的一般都会有这三部分代码
 ```python
-
-
 # 创建Dateset(可以自定义)
     dataset = face_dataset # Dataset部分自定义过的face_dataset
 # Dataset传递给DataLoader
-    dataloader = torch.utils.data.DataLoader(dataset,
-									 batch_size=64, # 批量大小
-									 shuffle=False, # 不要乱序
-									 num_workers=8 # 多进程
-									 )
+    dataloader = torch.utils.data.DataLoader(dataset,batch_size=64,shuffle=False,num_workers=8 \)
 # DataLoader迭代产生训练数据提供给模型
     for i in range(epoch):
         for index,(img,label) in enumerate(dataloader):
@@ -287,7 +281,7 @@ DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,
 * `pin_memory` (*bool, optional*) – 如果为True，数据加载器在返回前将张量复制到CUDA固定内存中。
 * `drop_last` (*bool, optional*) – 如果数据集大小不能被batch_size整除，设置为True可删除最后一个不完整的批处理。如果设为False并且数据集的大小不能被batch_size整除，则最后一个batch将更小。(default: False)
 * `timeout` (*numeric, optional*) – 如果是正数，表明等待从worker进程中收集一个batch等待的时间，若超出设定的时间还没有收集到，那就不收集这个内容了。这个numeric应总是大于等于0。 (default: 0)
-* `worker_init_fn` (*callable, optional*) – 。每个worker初始化函数 (default: None)
+* `worker_init_fn` (*callable, optional*) – 每个worker初始化函数 (default: None)
 
 
 dataset 没什么好说的，很重要，需要按照前面所说的两种dataset定义好，完成相关函数的重写。
@@ -305,11 +299,11 @@ shuffle 表示每一个epoch中训练样本的顺序是否相同，一般True。
 
 ```python
 class Sampler(object):
-    """Base class for all Samplers.
-    Every Sampler subclass has to provide an __iter__ method, providing a way
-    to iterate over indices of dataset elements, and a __len__ method that
-    returns the length of the returned iterators.
-    """
+    # """Base class for all Samplers.
+    # Every Sampler subclass has to provide an __iter__ method, providing a way
+    # to iterate over indices of dataset elements, and a __len__ method that
+    # returns the length of the returned iterators.
+    # """
     # 一个 迭代器 基类
     def __init__(self, data_source):
         pass
@@ -334,10 +328,10 @@ SequentialSampler 很好理解就是顺序采样器。
 
 ```python
 class SequentialSampler(Sampler):
-    r"""Samples elements sequentially, always in the same order.
-    Arguments:
-        data_source (Dataset): dataset to sample from
-    """
+    # r"""Samples elements sequentially, always in the same order.
+    # Arguments:
+    #     data_source (Dataset): dataset to sample from
+    # """
    # 产生顺序 迭代器
     def __init__(self, data_source):
         self.data_source = data_source
@@ -357,13 +351,13 @@ class SequentialSampler(Sampler):
 
 ```python
 class RandomSampler(Sampler):
-    r"""Samples elements randomly. If without replacement, then sample from a shuffled dataset.
-    If with replacement, then user can specify ``num_samples`` to draw.
-    Arguments:
-        data_source (Dataset): dataset to sample from
-        num_samples (int): number of samples to draw, default=len(dataset)
-        replacement (bool): samples are drawn with replacement if ``True``, default=False
-    """
+    # r"""Samples elements randomly. If without replacement, then sample from a shuffled dataset.
+    # If with replacement, then user can specify ``num_samples`` to draw.
+    # Arguments:
+    #     data_source (Dataset): dataset to sample from
+    #     num_samples (int): number of samples to draw, default=len(dataset)
+    #     replacement (bool): samples are drawn with replacement if ``True``, default=False
+    # """
 
     def __init__(self, data_source, replacement=False, num_samples=None):
         self.data_source = data_source
@@ -397,10 +391,10 @@ class RandomSampler(Sampler):
 这个采样器常见的使用场景是将训练集划分成训练集和验证集:
 ```python
 class SubsetRandomSampler(Sampler):
-    r"""Samples elements randomly from a given list of indices, without replacement.
-    Arguments:
-        indices (sequence): a sequence of indices
-    """
+    # r"""Samples elements randomly from a given list of indices, without replacement.
+    # Arguments:
+    #     indices (sequence): a sequence of indices
+    # """
 
     def __init__(self, indices):
         self.indices = indices
@@ -418,18 +412,18 @@ class SubsetRandomSampler(Sampler):
 
 ```python
 class BatchSampler(Sampler):
-    r"""Wraps another sampler to yield a mini-batch of indices.
-    Args:
-        sampler (Sampler): Base sampler.
-        batch_size (int): Size of mini-batch.
-        drop_last (bool): If ``True``, the sampler will drop the last batch if
-            its size would be less than ``batch_size``
-    Example:
-        >>> list(BatchSampler(SequentialSampler(range(10)), batch_size=3, drop_last=False))
-        [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]]
-        >>> list(BatchSampler(SequentialSampler(range(10)), batch_size=3, drop_last=True))
-        [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
-    """
+    #     Wraps another sampler to yield a mini-batch of indices.
+    # Args:
+    #     sampler (Sampler): Base sampler.
+    #     batch_size (int): Size of mini-batch.
+    #     drop_last (bool): If ``True``, the sampler will drop the last batch if
+    #         its size would be less than ``batch_size``
+    # Example:
+    #     >>> list(BatchSampler(SequentialSampler(range(10)), batch_size=3, drop_last=False))
+    #     [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]]
+    #     >>> list(BatchSampler(SequentialSampler(range(10)), batch_size=3, drop_last=True))
+    #     [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+
 # 批次采样
     def __init__(self, sampler, batch_size, drop_last):
         if not isinstance(sampler, Sampler):
