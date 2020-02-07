@@ -233,8 +233,241 @@ class MNIST(data.Dataset):
 
 关于迭代器与生成器的知识可以参见博主的另一篇文章[Python迭代器与生成器介绍及在Pytorch源码中应用](https://chenllliang.github.io/2020/02/06/PyIter/)。
 
-这一块先mark着，因为还没有找到应用场景。
+这一块先mark着，因为还没有使用过。
 
 
 
 # DataLoader
+> Data loader. Combines a dataset and a sampler, and provides an iterable over the given dataset.   --PyTorch Documents
+
+一般来说PyTorch中深度学习训练的流程是这样的：
+1. 创建Dateset
+2. Dataset传递给DataLoader
+3. DataLoader迭代产生训练数据提供给模型
+
+对应的一般都会有这三部分代码
+```python
+
+
+# 创建Dateset(可以自定义)
+    dataset = face_dataset # Dataset部分自定义过的face_dataset
+# Dataset传递给DataLoader
+    dataloader = torch.utils.data.DataLoader(dataset,
+									 batch_size=64, # 批量大小
+									 shuffle=False, # 不要乱序
+									 num_workers=8 # 多进程
+									 )
+# DataLoader迭代产生训练数据提供给模型
+    for i in range(epoch):
+        for index,(img,label) in enumerate(dataloader):
+            pass
+```
+
+到这里应该就PyTorch的数据集和数据传递机制应该就比较清晰明了了。Dataset负责建立索引到样本的映射，DataLoader负责以特定的方式从数据集中迭代的产生
+一个个batch的样本集合。在enumerate过程中实际上是dataloader按照其参数sampler规定的策略调用了其dataset的getitem方法。
+
+
+## 参数介绍
+先看一下实例化一个DataLoader所需的参数，我们只关注几个重点即可。
+```python
+DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,
+           batch_sampler=None, num_workers=0, collate_fn=None,
+           pin_memory=False, drop_last=False, timeout=0,
+           worker_init_fn=None)
+```
+
+参数介绍：
+* `dataset` (*Dataset*) – 定义好的Map式或者Iterable式数据集。
+* `batch_size` (*python:int, optional*) – 一个batch含有多少样本 (default: 1)。
+* `shuffle` (*bool, optional*) – 每一个epoch的batch样本是相同还是随机 (default: False)。
+* `sampler` (*Sampler, optional*) – 决定数据集中采样的方法. 如果有，则shuffle参数必须为False。
+* `batch_sampler` (*Sampler, optional*) – 和 sampler 类似，但是一次返回的是一个batch内所有样本的index。和 batch_size, shuffle, sampler, and drop_last 三个参数互斥。
+* `num_workers` (*python:int, optional*) – 多少个子程序同时工作来获取数据，多线程。 (default: 0)
+* `collate_fn` (*callable, optional*) – 合并样本列表以形成小批量。
+* `pin_memory` (*bool, optional*) – 如果为True，数据加载器在返回前将张量复制到CUDA固定内存中。
+* `drop_last` (*bool, optional*) – 如果数据集大小不能被batch_size整除，设置为True可删除最后一个不完整的批处理。如果设为False并且数据集的大小不能被batch_size整除，则最后一个batch将更小。(default: False)
+* `timeout` (*numeric, optional*) – 如果是正数，表明等待从worker进程中收集一个batch等待的时间，若超出设定的时间还没有收集到，那就不收集这个内容了。这个numeric应总是大于等于0。 (default: 0)
+* `worker_init_fn` (*callable, optional*) – 。每个worker初始化函数 (default: None)
+
+
+dataset 没什么好说的，很重要，需要按照前面所说的两种dataset定义好，完成相关函数的重写。
+
+batch_size 也没啥好说的，就是训练的一个批次的样本数。
+
+shuffle 表示每一个epoch中训练样本的顺序是否相同，一般True。
+
+### 采样器
+**sampler** 重点参数，采样器，是一个迭代器。PyTorch提供了多种采样器，用户也可以自定义采样器。
+
+所有sampler都是继承 `torch.utils.data.sampler.Sampler`这个抽象类。
+
+关于迭代器的基础知识在博主这篇文章中可以找到[Python迭代器与生成器介绍及在Pytorch源码中应用](https://chenllliang.github.io/2020/02/06/PyIter/)。
+
+```python
+class Sampler(object):
+    """Base class for all Samplers.
+    Every Sampler subclass has to provide an __iter__ method, providing a way
+    to iterate over indices of dataset elements, and a __len__ method that
+    returns the length of the returned iterators.
+    """
+    # 一个 迭代器 基类
+    def __init__(self, data_source):
+        pass
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    def __len__(self):
+        raise NotImplementedError
+```
+
+#### PyTorch自带的Sampler
+
+* SequentialSampler
+* RandomSampler
+* SubsetRandomSampler
+* WeightedRandomSampler
+
+SequentialSampler 很好理解就是顺序采样器。
+
+其原理是首先在初始化的时候拿到数据集`data_source`，之后在`__iter__`方法中首先得到一个和`data_source`一样长度的`range`可迭代器。每次只会返回一个**索引值**。
+
+```python
+class SequentialSampler(Sampler):
+    r"""Samples elements sequentially, always in the same order.
+    Arguments:
+        data_source (Dataset): dataset to sample from
+    """
+   # 产生顺序 迭代器
+    def __init__(self, data_source):
+        self.data_source = data_source
+
+    def __iter__(self):
+        return iter(range(len(self.data_source)))
+
+    def __len__(self):
+        return len(self.data_source)
+```
+
+参数作用：
+
+* `data_source`: 同上
+* `num_samples`: 指定采样的数量，默认是所有。
+* `replacement`: 若为True，则表示可以重复采样，即同一个样本可以重复采样，这样可能导致有的样本采样不到。所以此时我们可以设置num_samples来增加采样数量使得每个样本都可能被采样到。
+
+```python
+class RandomSampler(Sampler):
+    r"""Samples elements randomly. If without replacement, then sample from a shuffled dataset.
+    If with replacement, then user can specify ``num_samples`` to draw.
+    Arguments:
+        data_source (Dataset): dataset to sample from
+        num_samples (int): number of samples to draw, default=len(dataset)
+        replacement (bool): samples are drawn with replacement if ``True``, default=False
+    """
+
+    def __init__(self, data_source, replacement=False, num_samples=None):
+        self.data_source = data_source
+        self.replacement = replacement
+        self.num_samples = num_samples
+
+        if self.num_samples is not None and replacement is False:
+            raise ValueError("With replacement=False, num_samples should not be specified, "
+                             "since a random permute will be performed.")
+
+        if self.num_samples is None:
+            self.num_samples = len(self.data_source)
+
+        if not isinstance(self.num_samples, int) or self.num_samples <= 0:
+            raise ValueError("num_samples should be a positive integeral "
+                             "value, but got num_samples={}".format(self.num_samples))
+        if not isinstance(self.replacement, bool):
+            raise ValueError("replacement should be a boolean value, but got "
+                             "replacement={}".format(self.replacement))
+
+    def __iter__(self):
+        n = len(self.data_source)
+        if self.replacement:
+            return iter(torch.randint(high=n, size=(self.num_samples,), dtype=torch.int64).tolist())
+        return iter(torch.randperm(n).tolist())
+
+    def __len__(self):
+        return len(self.data_source)
+```
+
+这个采样器常见的使用场景是将训练集划分成训练集和验证集:
+```python
+class SubsetRandomSampler(Sampler):
+    r"""Samples elements randomly from a given list of indices, without replacement.
+    Arguments:
+        indices (sequence): a sequence of indices
+    """
+
+    def __init__(self, indices):
+        self.indices = indices
+
+    def __iter__(self):
+        return (self.indices[i] for i in torch.randperm(len(self.indices)))
+
+    def __len__(self):
+        return len(self.indices)
+```
+
+**batch_sampler**
+
+前面的采样器每次都只返回一个索引，但是我们在训练时是对批量的数据进行训练，而这个工作就需要`BatchSampler`来做。也就是说`BatchSampler`的作用就是将前面的Sampler采样得到的索引值进行合并，当数量等于一个batch大小后就将这一批的索引值返回。
+
+```python
+class BatchSampler(Sampler):
+    r"""Wraps another sampler to yield a mini-batch of indices.
+    Args:
+        sampler (Sampler): Base sampler.
+        batch_size (int): Size of mini-batch.
+        drop_last (bool): If ``True``, the sampler will drop the last batch if
+            its size would be less than ``batch_size``
+    Example:
+        >>> list(BatchSampler(SequentialSampler(range(10)), batch_size=3, drop_last=False))
+        [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]]
+        >>> list(BatchSampler(SequentialSampler(range(10)), batch_size=3, drop_last=True))
+        [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+    """
+# 批次采样
+    def __init__(self, sampler, batch_size, drop_last):
+        if not isinstance(sampler, Sampler):
+            raise ValueError("sampler should be an instance of "
+                             "torch.utils.data.Sampler, but got sampler={}"
+                             .format(sampler))
+        if not isinstance(batch_size, _int_classes) or isinstance(batch_size, bool) or \
+                batch_size <= 0:
+            raise ValueError("batch_size should be a positive integeral value, "
+                             "but got batch_size={}".format(batch_size))
+        if not isinstance(drop_last, bool):
+            raise ValueError("drop_last should be a boolean value, but got "
+                             "drop_last={}".format(drop_last))
+        self.sampler = sampler
+        self.batch_size = batch_size
+        self.drop_last = drop_last
+
+    def __iter__(self):
+        batch = []
+        for idx in self.sampler:
+            batch.append(idx)
+            if len(batch) == self.batch_size:
+                yield batch
+                batch = []
+        if len(batch) > 0 and not self.drop_last:
+            yield batch
+
+    def __len__(self):
+        if self.drop_last:
+            return len(self.sampler) // self.batch_size
+        else:
+            return (len(self.sampler) + self.batch_size - 1) // self.batch_size
+```
+
+### 多线程
+`num_workers` 参数表示同时参与数据读取的线程数量，多线程技术可以加快数据读取，提供GPU/CPU利用率。
+
+未来会出一篇文章讲一讲PyTorch多线程实现的原理。
+
+---
+以上
