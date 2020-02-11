@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      揭开词向量的面纱
+title:      词向量的前世今生
 subtitle:   NLP
 date:       2020-02-08
 author:     CL
