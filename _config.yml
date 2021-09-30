@@ -2,7 +2,7 @@
 title: Liang's Blog
 SEOTitle: 陈亮的博客 | Liang's Blog
 header-img: img/bg.jpg
-email: chenliang5518@mails.jlu.edu.cn
+email: leo.liang.chen@outlook.com
 description: "面对我们的骨灰，高尚的人们将洒下热泪"
 keyword: "CL, CL Blog, 陈亮的博客, chenliang, 陈亮, Machine Learning, JLU, 吉林大学"
 url: "http://chenllliang.github.io"          # your host, for absolute URL
@@ -18,10 +18,10 @@ sidebar-avatar: /img/clcl.jpeg      # use absolute URL, seeing it's used in both
 
 # SNS settings
 RSS: false
-# weibo_username:     qiubaiying
+
 zhihu_username:     chen-liang-92-62
 github_username:    chenllliang
-#twitter_username:   qiubaiying
+
 
 
 
