@@ -1,17 +1,17 @@
 # Site settings
 title: Liang's Blog
-SEOTitle: 陈亮的博客 | Liang's Blog
+SEOTitle: 陈亮的博客 | Liang Chen's Blog
 header-img: img/bg.jpg
 email: leo.liang.chen@outlook.com
 description: "面对我们的骨灰，高尚的人们将洒下热泪"
-keyword: "CL, CL Blog, 陈亮的博客, chenliang, 陈亮, Machine Learning, JLU, 吉林大学"
+keyword: "CL, CL Blog, 陈亮的博客, chenliang, 陈亮, Machine Learning, Chen Liang, Liang Chen"
 url: "http://chenllliang.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/chenllliang/chenllliang.github.io.git" # you code repository
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "Goals determine what you going to be!"
+sidebar-about-description: "Goals determine what you are going to be!"
 sidebar-avatar: /img/clcl.jpeg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -99,8 +99,9 @@ friends: [
     {
         title: "吉林大学",
         href: "https://www.jlu.edu.cn/"
-    },{
-        title: "北京大学",
-        href: "https://www.pku.edu.cn/"
+    }
+      {
+        title: "KAAAsS",
+        href: "https://blog.kaaass.net"
     }
 ]
