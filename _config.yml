@@ -11,7 +11,7 @@ github_repo: "https://github.com/chenllliang/chenllliang.github.io.git" # you co
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "Goals determine what you are going to be!"
+sidebar-about-description: "一路向北"
 sidebar-avatar: /img/clcl.jpeg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -99,9 +99,6 @@ friends: [
     {
         title: "吉林大学",
         href: "https://www.jlu.edu.cn/"
-    },
-      {
-        title: "KAAAsS",
-        href: "https://blog.kaaass.net"
     }
+
 ]
