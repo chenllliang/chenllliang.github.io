@@ -95,10 +95,10 @@ service-worker: true
 
 
 # Friends
-friends: [
-    {
-        title: "吉林大学",
-        href: "https://www.jlu.edu.cn/"
-    }
-
-]
+#friends: [
+#    {
+#        title: "吉林大学",
+#        href: "https://www.jlu.edu.cn/"
+#    }
+#
+#]
